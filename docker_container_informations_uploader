@@ -68,7 +68,7 @@ RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
 
 if [ $? -eq 0 ]; then
     echo "- Upload Successfull!"
-	echo "- Please download your file the share it with us"
+	echo "- Please download your file then share it with us"
 	echo "- Before share, check it doesnt contains any private informations"
 	echo " -------------------------------- SHARE THIS --------------------------------"
 	echo "${RESPONSE}" | tr , \\n | grep link
