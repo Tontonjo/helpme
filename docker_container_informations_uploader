@@ -26,7 +26,8 @@ echo "- docker stats --all --no-stream"
 dockerstatus=$(docker stats --all --no-stream)
 
 echo "- Creating log file"
-echo $dockerstatus > docker_container_informations_uploader.txt
+# Quotes ensure format is kept
+echo "$dockerstatus" > docker_container_informations_uploader.txt
 
 echo "- Defining expidation to $DEFAULT_EXPIRE" 
 EXPIRE=${2:-$DEFAULT_EXPIRE}
