@@ -28,12 +28,30 @@ FILE=docker_container_informations_uploader.txt
 echo "- Getting Docker stats informations"
 echo "- docker stats --all --no-stream"
 dockerstatus=$(docker stats --all --no-stream)
+if [ $# -eq 0 ]; then
+	echo "- No container specified - continuing"
+else	
+	echo "- Container $1 specified - Getting Docker stats informations"
+	echo "- Getting needed container to retreive informations - this may take some times"
+	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $1
+	if [ $? -eq 0 ]; then
+	command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $1)
+else
+	 echo "- Container run failed to retreive informations, please control your parameters"
+	 exit
+	 
+fi
+fi
+
 
 echo "- Creating log file"
 # Quotes ensure format is kept
 echo "-------------------------------- DOCKER STATS --------------------------------
-echo "$dockerstatus
-echo " -------------------------------- END OF DOCKER STATS --------------------------------
+echo $dockerstatus
+echo -------------------------------- END OF DOCKER STATS --------------------------------
+echo -------------------------------- DOCKER $1 COMMAND --------------------------------
+echo $command
+echo -------------------------------- DOCKER $1 COMMAND --------------------------------
 " > docker_container_informations_uploader.txt
 
 echo "- Defining expidation to $DEFAULT_EXPIRE" 
