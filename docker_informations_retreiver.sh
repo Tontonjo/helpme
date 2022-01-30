@@ -16,7 +16,7 @@ version=1.0
 
 echo "----------------------------------------------------------------"
 echo "Tonton Jo - 2022"
-echo "docker_container_informations_uploader V$version"
+echo "docker_informations_retreiver V$version"
 echo "----------------------------------------------------------------"
 
 # -----------------ENVIRONNEMENT VARIABLES----------------------
