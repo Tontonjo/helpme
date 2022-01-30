@@ -3,6 +3,10 @@
 # Tonton Jo - 2021
 # Join me on Youtube: https://www.youtube.com/c/tontonjo
 
+# This scripts aims to retreive usefull informations from my viewers in order to help them better.
+# It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
+# Please check your upload before sharing the link
+
 version=1.0
 
 # V1.0: Initial Release
@@ -27,7 +31,10 @@ dockerstatus=$(docker stats --all --no-stream)
 
 echo "- Creating log file"
 # Quotes ensure format is kept
-echo "$dockerstatus" > docker_container_informations_uploader.txt
+echo "-------------------------------- DOCKER STATS --------------------------------
+echo "$dockerstatus
+echo " -------------------------------- END OF DOCKER STATS --------------------------------
+" > docker_container_informations_uploader.txt
 
 echo "- Defining expidation to $DEFAULT_EXPIRE" 
 EXPIRE=${2:-$DEFAULT_EXPIRE}
