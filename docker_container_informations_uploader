@@ -1,0 +1,42 @@
+!/bin/sh
+
+# Tonton Jo - 2021
+# Join me on Youtube: https://www.youtube.com/c/tontonjo
+
+version=1.0
+
+# V1.0: Initial Release
+
+# Sources:
+# https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
+
+echo "----------------------------------------------------------------"
+echo "Tonton Jo - 2022"
+echo "docker_container_informations_uploader V$version"
+echo "----------------------------------------------------------------"
+
+# -----------------ENVIRONNEMENT VARIABLES----------------------
+URL="https://file.io"
+DEFAULT_EXPIRE="14d" # Default to 14 days
+FILE=docker_container_informations_uploader.txt
+# ---------------END OF ENVIRONNEMENT VARIABLES-----------------
+
+docker-status=$(docker stats --all)
+echo $ docker-status > docker_container_informations_uploader.txt
+
+if [ $# -eq 0 ]; then
+    printf "Usage: file.io.sh FILE [DURATION]\n"
+    printf "Example: file.io.sh path/to/my/file 1w\n"
+    exit 1
+fi
+
+EXPIRE=${2:-$DEFAULT_EXPIRE}
+
+if [ ! -f "$FILE" ]; then
+    echo "File ${FILE} not found"
+    exit 1
+fi
+
+RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
+
+echo "${RESPONSE}"
