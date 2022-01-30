@@ -1,4 +1,4 @@
-!/bin/sh
+#!/bin/sh
 
 # Tonton Jo - 2021
 # Join me on Youtube: https://www.youtube.com/c/tontonjo
@@ -21,22 +21,32 @@ DEFAULT_EXPIRE="14d" # Default to 14 days
 FILE=docker_container_informations_uploader.txt
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
-docker-status=$(docker stats --all)
-echo $ docker-status > docker_container_informations_uploader.txt
+echo "- Getting Docker stats informations"
+echo "- docker stats --all --no-stream"
+dockerstatus=$(docker stats --all --no-stream)
 
-if [ $# -eq 0 ]; then
-    printf "Usage: file.io.sh FILE [DURATION]\n"
-    printf "Example: file.io.sh path/to/my/file 1w\n"
-    exit 1
-fi
+echo "- Creating log file"
+echo $dockerstatus > docker_container_informations_uploader.txt
 
+echo "- Defining expidation to $DEFAULT_EXPIRE" 
 EXPIRE=${2:-$DEFAULT_EXPIRE}
 
+echo "- Validating file exist before upload" 
 if [ ! -f "$FILE" ]; then
     echo "File ${FILE} not found"
     exit 1
 fi
 
+echo "- File uploaded"
 RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
 
-echo "${RESPONSE}"
+if [ $? -eq 0 ]; then
+    echo "- Upload Successfull!"
+	echo "- Please shart this link"
+	echo "- Before share, check it doesnt contains any private informations"
+	echo " -------------------------------- SHARE THIS --------------------------------"
+	echo "${RESPONSE}" | tr , \\n | grep link
+	echo " -------------------------------- SHARE THIS --------------------------------"
+else
+	 echo "- Upload Failed - Something went wrong.!"
+fi
