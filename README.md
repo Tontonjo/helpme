@@ -22,9 +22,9 @@ get informations about a docker host and running container(s)
 ### How to:
 Execute script and retreive informations about all running containers:
 ```shell
-wget -q -o - https://raw.githubusercontent.com/Tontonjo/helpme/main/proxmox_toolbox.sh | bash
+wget -q -o - https://github.com/Tontonjo/helpme/raw/main/docker_informations_retreiver.sh | bash
 ```  
 Execute script and retreive informations about one or more containers:
 ```shell
-wget -q -o - https://raw.githubusercontent.com/Tontonjo/helpme/main/proxmox_toolbox.sh | bash
+wget -q -o - https://github.com/Tontonjo/helpme/raw/main/docker_informations_retreiver.sh | bash
 ```
