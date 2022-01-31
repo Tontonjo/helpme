@@ -53,7 +53,7 @@ else
 		for I in "$@" ; do
 		echo "- Container $I specified - Getting Docker stats informations"
 		command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I)
-		log=$(docker log $I)
+		log=$(docker logs $I)
 		if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "$command"																					>> docker_container_informations_uploader.txt
