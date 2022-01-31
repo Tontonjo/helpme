@@ -62,7 +62,7 @@ else
 			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "$log"																					>> docker_container_informations_uploader.txt
-			echo "-------------------------------- DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
+			echo "-------------------------------- END DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
 		else
 			echo "- Failed to run with specified container $I - does it exist?"
 			echo "- Script will exit now"
