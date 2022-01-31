@@ -26,5 +26,8 @@ wget -q -O - https://github.com/Tontonjo/helpme/raw/main/docker_informations_ret
 ```  
 Execute script and retreive informations about one or more containers:
 ```shell
-wget -q -O - https://github.com/Tontonjo/helpme/raw/main/docker_informations_retreiver.sh | bash
+wget -q -N -O https://github.com/Tontonjo/helpme/raw/main/docker_informations_retreiver.sh 
+```
+```shell
+bash docker_informations_retreiver.sh CONTAINER1 CONTAINER2
 ```
