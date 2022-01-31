@@ -7,10 +7,10 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.0
+version=1.1
 
 # V1.0: Initial Release
-
+# V1.1: enhencement, add docker networks
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
 
@@ -33,16 +33,18 @@ loglastlines=100
 
 echo "- Creating log file"
 # Quotes ensure format is kept
-echo "--------------------------------  INFOS --------------------------------" 				> docker_container_informations_uploader.txt
-echo "Time of generation: $dt" 																	>> docker_container_informations_uploader.txt
-echo "hostname: $hostname" 																		>> docker_container_informations_uploader.txt
-echo "IP: $hostip" 																				>> docker_container_informations_uploader.txt
-echo "-------------------------------- END OF INFOS --------------------------------" 			>> docker_container_informations_uploader.txt
-echo "- Getting Docker stats informations"
-dockerstatus=$(docker stats --all --no-stream) > /dev/null
-echo "-------------------------------- DOCKER STATS --------------------------------" 			>> docker_container_informations_uploader.txt
-echo "$dockerstatus" 																			>> docker_container_informations_uploader.txt
+echo "--------------------------------  INFOS --------------------------------" 		> docker_container_informations_uploader.txt
+echo "Time of generation: $dt" 									>> docker_container_informations_uploader.txt
+echo "hostname: $hostname" 									>> docker_container_informations_uploader.txt
+echo "IP: $hostip" 										>> docker_container_informations_uploader.txt
+echo "-------------------------------- END OF INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
+echo "- Getting general Docker informations"							
+echo "-------------------------------- DOCKER STATS --------------------------------" 		>> docker_container_informations_uploader.txt
+docker stats --all --no-stream									>> docker_container_informations_uploader.txt
 echo "-------------------------------- END OF DOCKER STATS --------------------------------"	>> docker_container_informations_uploader.txt
+echo "-------------------------------- DOCKER NETWORKS --------------------------------" 	>> docker_container_informations_uploader.txt
+docker network ls										>> docker_container_informations_uploader.txt
+echo "-------------------------------- END OF DOCKER NETWORKS --------------------------------"	>> docker_container_informations_uploader.txt
 
 if [ $# -eq 0 ]; then
 echo "- No container specified - getting infos about all containers"
