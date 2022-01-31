@@ -24,59 +24,55 @@ URL="https://file.io"
 DEFAULT_EXPIRE="14d" # Default to 14 days
 FILE=docker_container_informations_uploader.txt
 dt=$(date '+%d/%m/%Y %H:%M:%S');
-execdir=$(dirname $0)
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
-echo "- Getting Docker stats informations"
-echo "- docker stats --all --no-stream"
-dockerstatus=$(docker stats --all --no-stream)
-if [ $# -eq 0 ]; then
-	echo "- No container specified - continuing"
-else	
-	echo "- Container $1 specified - Getting Docker stats informations"
-	echo "- Getting needed container to retreive informations - this may take some times"
-	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $1
-	if [ $? -eq 0 ]; then
-	command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $1)
-else
-	 echo "- Container run failed to retreive informations, please control your parameters"
-	 exit
-	 
-fi
-fi
 
 
 echo "- Creating log file"
 # Quotes ensure format is kept
-echo "
---------------------------------  INFOS --------------------------------
-Time of generation: $dt
--------------------------------- END OF INFOS --------------------------------
--------------------------------- DOCKER $1 COMMAND --------------------------------
-"$command"
--------------------------------- DOCKER $1 COMMAND --------------------------------
--------------------------------- DOCKER STATS --------------------------------
-"$dockerstatus"
--------------------------------- END OF DOCKER STATS --------------------------------
--------------------------------- DOCKER $1 COMMAND --------------------------------
-"$command"
--------------------------------- DOCKER $1 COMMAND --------------------------------
-" > docker_container_informations_uploader.txt
+echo "--------------------------------  INFOS --------------------------------" 				> docker_container_informations_uploader.txt
+echo "Time of generation: $dt" 																	>> docker_container_informations_uploader.txt
+echo "-------------------------------- END OF INFOS --------------------------------" 			>> docker_container_informations_uploader.txt
+echo "- Getting Docker stats informations"
+echo "- docker stats --all --no-stream"
+dockerstatus=$(docker stats --all --no-stream)
+echo "-------------------------------- DOCKER STATS --------------------------------" 			>> docker_container_informations_uploader.txt
+echo "$dockerstatus" 																			>> docker_container_informations_uploader.txt
+echo "-------------------------------- END OF DOCKER STATS --------------------------------"	>> docker_container_informations_uploader.txt
 
-echo "- Defining expidation to $DEFAULT_EXPIRE" 
-EXPIRE=${2:-$DEFAULT_EXPIRE}
+if [ $# -eq 0 ]; then
+	echo "- No container specified - continuing"
+else	
+	echo "- Getting needed container to retreive informations - this may take some times"
+	docker pull nexdrew/rekcod
+	if [ $? -eq 0 ]; then
+		for I in "$@" ; do
+		echo "- Container $I specified - Getting Docker stats informations"
+		command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I)
+		echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
+		echo "$command"																					>> docker_container_informations_uploader.txt
+		echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
+		done
+	else
+		echo "- Container run failed to retreive informations, please control your parameters"
+		exit
+	fi
+fi
 
-echo "- Validating file exist before upload" 
+
+echo "- Validating file exist" 
 if [ ! -f "$FILE" ]; then
     echo "File ${FILE} not found"
     exit 1
 fi
 read -p "- Do you want to upload this log to file.io and download it? y = yes / anything = no: " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
+	echo "- Defining expidation to $DEFAULT_EXPIRE" 
+	EXPIRE=${2:-$DEFAULT_EXPIRE}
 	echo "- File uploaded"
 	RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
 		if [ $? -eq 0 ]; then
-		    	echo "- Upload Successfull!"
+		    echo "- Upload Successfull!"
 			echo "- Please download your file then share it with us"
 			echo "- Before share, check it doesnt contains any private informations"
 			echo " -------------------------------- SHARE THIS --------------------------------"
@@ -84,9 +80,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 			echo " -------------------------------- SHARE THIS --------------------------------"
 		else
 			 echo "- Upload Failed - Something went wrong.!"
+		fi
 	else
-	echo "
-	- Your log file is available locally at:
-	- $execdir/$FILE"
-	fi
+	echo "- Your log file is available locally at:"
+	realpath $FILE
 fi
