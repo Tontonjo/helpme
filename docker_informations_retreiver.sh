@@ -59,10 +59,10 @@ docker pull nexdrew/rekcod -q > /dev/null
 		command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I)
 		if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
-			echo "$command"																					>> docker_container_informations_uploader.txt
+			docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I			>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I LOG --------------------------------" 			>> docker_container_informations_uploader.txt
-			docker logs -t $I | tail -$loglastlines															>> docker_container_informations_uploader.txt
+			docker logs -t $I | tail -$loglastlines									>> docker_container_informations_uploader.txt
 			echo "-------------------------------- END DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
 			
 		else
