@@ -9,7 +9,7 @@
 [![Infomaniak](https://badgen.net/badge/Infomaniak/Affiliated%20link?icon=K)](https://www.infomaniak.com/goto/fr/home?utm_term=6151f412daf35)
 [![Express VPN](https://badgen.net/badge/Express%20VPN/Affiliated%20link?icon=K)](https://www.xvuslink.com/?a_fid=TontonJo)  
 ## Informations:
-Thioses scripts aims to retreive usefull informations from my viewers in order to help them better.
+Thoses scripts aims to retreive usefull informations from my viewers in order to help them better.
 It's not intended to get private informations, but as this is scripted, some may be unintentionnaly obtained.
 No content will be uploaded or sent without your consent: Please check the content before sharing the file.
 
@@ -18,7 +18,9 @@ No content will be uploaded or sent without your consent: Please check the conte
 https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
 
 ### Used to:
-get informations about a docker host and running container(s)
+- Get informations about a docker host and running container(s)
+- Create a file with all thoses informations
+- Allow you to upload it or not on file.io  
 ### How to:
 Execute script and retreive informations about all running containers:
 ```shell
