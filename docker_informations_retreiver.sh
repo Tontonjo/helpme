@@ -7,8 +7,12 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.0
+# Usage:
+# Execute script and to be complete, specify the container names you want to retreive informations from
+# bash docker_informations_retreiver.sh container1 container2
+# The script then generate a txt file with informations about running containers that you can uplod to file.io or share yourself.
 
+version=1.0
 # V1.0: Initial Release
 
 # Sources:
@@ -78,6 +82,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 			echo " -------------------------------- SHARE THIS --------------------------------"
 			echo "${RESPONSE}" | tr , \\n | grep link
 			echo " -------------------------------- SHARE THIS --------------------------------"
+			echo " - File can only be downloaded once"
 		else
 			 echo "- Upload Failed - Something went wrong.!"
 		fi
