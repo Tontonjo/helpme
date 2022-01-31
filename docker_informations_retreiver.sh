@@ -52,8 +52,10 @@ else
 	if [ $? -eq 0 ]; then
 		for I in "$@" ; do
 		echo "- Container $I specified - Getting Docker stats informations"
+		# Get command used to start container
 		command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I)
-		log=$(docker logs $I)
+		# Get the last 100 lines of container log
+		log=$(docker logs $I | tail -100)
 		if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "$command"																					>> docker_container_informations_uploader.txt
