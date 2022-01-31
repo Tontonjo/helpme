@@ -23,6 +23,8 @@ echo "----------------------------------------------------------------"
 URL="https://file.io"
 DEFAULT_EXPIRE="14d" # Default to 14 days
 FILE=docker_container_informations_uploader.txt
+dt=$(date '+%d/%m/%Y %H:%M:%S');
+execdir=$(dirname $0)
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
 echo "- Getting Docker stats informations"
@@ -46,12 +48,19 @@ fi
 
 echo "- Creating log file"
 # Quotes ensure format is kept
-echo "-------------------------------- DOCKER STATS --------------------------------
-echo $dockerstatus
-echo -------------------------------- END OF DOCKER STATS --------------------------------
-echo -------------------------------- DOCKER $1 COMMAND --------------------------------
-echo $command
-echo -------------------------------- DOCKER $1 COMMAND --------------------------------
+echo "
+--------------------------------  INFOS --------------------------------
+Time of generation: $dt
+-------------------------------- END OF INFOS --------------------------------
+-------------------------------- DOCKER $1 COMMAND --------------------------------
+"$command"
+-------------------------------- DOCKER $1 COMMAND --------------------------------
+-------------------------------- DOCKER STATS --------------------------------
+"$dockerstatus"
+-------------------------------- END OF DOCKER STATS --------------------------------
+-------------------------------- DOCKER $1 COMMAND --------------------------------
+"$command"
+-------------------------------- DOCKER $1 COMMAND --------------------------------
 " > docker_container_informations_uploader.txt
 
 echo "- Defining expidation to $DEFAULT_EXPIRE" 
@@ -62,17 +71,22 @@ if [ ! -f "$FILE" ]; then
     echo "File ${FILE} not found"
     exit 1
 fi
-
-echo "- File uploaded"
-RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
-
-if [ $? -eq 0 ]; then
-    echo "- Upload Successfull!"
-	echo "- Please download your file then share it with us"
-	echo "- Before share, check it doesnt contains any private informations"
-	echo " -------------------------------- SHARE THIS --------------------------------"
-	echo "${RESPONSE}" | tr , \\n | grep link
-	echo " -------------------------------- SHARE THIS --------------------------------"
-else
-	 echo "- Upload Failed - Something went wrong.!"
+read -p "- Do you want to upload this log to file.io and download it? y = yes / anything = no: " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+	echo "- File uploaded"
+	RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
+		if [ $? -eq 0 ]; then
+		    	echo "- Upload Successfull!"
+			echo "- Please download your file then share it with us"
+			echo "- Before share, check it doesnt contains any private informations"
+			echo " -------------------------------- SHARE THIS --------------------------------"
+			echo "${RESPONSE}" | tr , \\n | grep link
+			echo " -------------------------------- SHARE THIS --------------------------------"
+		else
+			 echo "- Upload Failed - Something went wrong.!"
+	else
+	echo "
+	- Your log file is available locally at:
+	- $execdir/$FILE"
+	fi
 fi
