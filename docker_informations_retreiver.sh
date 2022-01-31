@@ -48,7 +48,7 @@ if [ $# -eq 0 ]; then
 	echo "- No container specified - continuing"
 else	
 	echo "- Getting needed container to retreive informations - this may take some times"
-	docker pull nexdrew/rekcod
+	docker pull nexdrew/rekcod -q
 	if [ $? -eq 0 ]; then
 		for I in "$@" ; do
 		echo "- Container $I specified - Getting Docker stats informations"
