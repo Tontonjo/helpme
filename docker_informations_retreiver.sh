@@ -82,7 +82,7 @@ docker pull nexdrew/rekcod -q > /dev/null
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			echo "- Defining expidation to $DEFAULT_EXPIRE" 
 			EXPIRE=${2:-$DEFAULT_EXPIRE}
-			echo "- File uploaded"
+			echo "- Uploading file to file.io"
 			RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
 				if [ $? -eq 0 ]; then
 					echo "- Upload Successfull!"
@@ -92,7 +92,7 @@ docker pull nexdrew/rekcod -q > /dev/null
 					echo "${RESPONSE}" | tr , \\n | grep link
 					echo " -------------------------------- SHARE THIS --------------------------------"
 				else
-					 echo "- Upload Failed - Something went wrong.!"
+					 echo "- Upload Failed - Something went wrong!"
 				fi
 			else
 			echo "- Your log file is available locally at:"
