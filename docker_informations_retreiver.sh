@@ -7,12 +7,8 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-# Usage:
-# Execute script and to be complete, specify the container names you want to retreive informations from
-# bash docker_informations_retreiver.sh container1 container2
-# The script then generate a txt file with informations about running containers that you can uplod to file.io or share yourself.
-
 version=1.0
+
 # V1.0: Initial Release
 
 # Sources:
@@ -53,12 +49,21 @@ else
 		for I in "$@" ; do
 		echo "- Container $I specified - Getting Docker stats informations"
 		command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I)
-		echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
-		echo "$command"																					>> docker_container_informations_uploader.txt
-		echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
+		if [ $? -eq 0 ]; then
+			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
+			echo "$command"																					>> docker_container_informations_uploader.txt
+			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
+		else
+			echo "- Failed to run with specified container $I - does it exist?"
+			echo "- Script will exit now"
+			sleep 7
+			exit
+		fi
 		done
 	else
-		echo "- Container run failed to retreive informations, please control your parameters"
+		echo "- Failed to download needed ressources using docker pull"
+		echo "- Script will exit now"
+		sleep 7
 		exit
 	fi
 fi
@@ -82,7 +87,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 			echo " -------------------------------- SHARE THIS --------------------------------"
 			echo "${RESPONSE}" | tr , \\n | grep link
 			echo " -------------------------------- SHARE THIS --------------------------------"
-			echo " - File can only be downloaded once"
 		else
 			 echo "- Upload Failed - Something went wrong.!"
 		fi
