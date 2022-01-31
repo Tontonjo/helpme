@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Tonton Jo - 2021
 # Join me on Youtube: https://www.youtube.com/c/tontonjo
@@ -26,6 +26,7 @@ FILE=docker_container_informations_uploader.txt
 dt=$(date '+%d/%m/%Y %H:%M:%S');
 hostname=$(hostname)
 hostip=$(hostname -I)
+loglastlines=100
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
 
@@ -38,69 +39,68 @@ echo "hostname: $hostname" 																		>> docker_container_informations_up
 echo "IP: $hostip" 																				>> docker_container_informations_uploader.txt
 echo "-------------------------------- END OF INFOS --------------------------------" 			>> docker_container_informations_uploader.txt
 echo "- Getting Docker stats informations"
-echo "- docker stats --all --no-stream"
-dockerstatus=$(docker stats --all --no-stream)
+dockerstatus=$(docker stats --all --no-stream) > /dev/null
 echo "-------------------------------- DOCKER STATS --------------------------------" 			>> docker_container_informations_uploader.txt
 echo "$dockerstatus" 																			>> docker_container_informations_uploader.txt
 echo "-------------------------------- END OF DOCKER STATS --------------------------------"	>> docker_container_informations_uploader.txt
 
 if [ $# -eq 0 ]; then
-	echo "- No container specified - continuing"
-else	
-	echo "- Getting needed container to retreive informations - this may take some times"
-	docker pull nexdrew/rekcod -q
+echo "- No container specified - getting infos about all containers"
+	containerlist=$(docker stats --all --no-stream | awk '{print $2}' | tail -n +2)
+else
+	containerlist=$@
+fi
+echo "- Getting needed container to retreive informations - this may take some times"
+docker pull nexdrew/rekcod -q > /dev/null
 	if [ $? -eq 0 ]; then
-		for I in "$@" ; do
-		echo "- Container $I specified - Getting Docker stats informations"
+	for I in $containerlist ; do
+		echo "- Container $I - Getting Docker stats informations"
 		# Get command used to start container
 		command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I)
-		# Get the last 100 lines of container log
-		log=$(docker logs $I | tail -100)
 		if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "$command"																					>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
-			echo "-------------------------------- DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
-			echo "$log"																					>> docker_container_informations_uploader.txt
+			echo "-------------------------------- DOCKER $I LOG --------------------------------" 			>> docker_container_informations_uploader.txt
+			docker logs -t $I | tail -$loglastlines															>> docker_container_informations_uploader.txt
 			echo "-------------------------------- END DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
+			
 		else
 			echo "- Failed to run with specified container $I - does it exist?"
 			echo "- Script will exit now"
 			sleep 7
 			exit
 		fi
-		done
+		done	
+		# Checking and sharing output
+		echo "- Validating file exist" 
+		if [ ! -f "$FILE" ]; then
+			echo "File ${FILE} not found"
+			exit 1
+		fi
+		read -p "- Do you want to upload this log to file.io and download it? y = yes / anything = no: " -n 1 -r
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			echo "- Defining expidation to $DEFAULT_EXPIRE" 
+			EXPIRE=${2:-$DEFAULT_EXPIRE}
+			echo "- File uploaded"
+			RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
+				if [ $? -eq 0 ]; then
+					echo "- Upload Successfull!"
+					echo "- Please download your file then share it with us"
+					echo "- Before share, check it doesnt contains any private informations"
+					echo " -------------------------------- SHARE THIS --------------------------------"
+					echo "${RESPONSE}" | tr , \\n | grep link
+					echo " -------------------------------- SHARE THIS --------------------------------"
+				else
+					 echo "- Upload Failed - Something went wrong.!"
+				fi
+			else
+			echo "- Your log file is available locally at:"
+			realpath $FILE
+fi
 	else
 		echo "- Failed to download needed ressources using docker pull"
 		echo "- Script will exit now"
 		sleep 7
 		exit
 	fi
-fi
-
-
-echo "- Validating file exist" 
-if [ ! -f "$FILE" ]; then
-    echo "File ${FILE} not found"
-    exit 1
-fi
-read -p "- Do you want to upload this log to file.io and download it? y = yes / anything = no: " -n 1 -r
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "- Defining expidation to $DEFAULT_EXPIRE" 
-	EXPIRE=${2:-$DEFAULT_EXPIRE}
-	echo "- File uploaded"
-	RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
-		if [ $? -eq 0 ]; then
-		    echo "- Upload Successfull!"
-			echo "- Please download your file then share it with us"
-			echo "- Before share, check it doesnt contains any private informations"
-			echo " -------------------------------- SHARE THIS --------------------------------"
-			echo "${RESPONSE}" | tr , \\n | grep link
-			echo " -------------------------------- SHARE THIS --------------------------------"
-		else
-			 echo "- Upload Failed - Something went wrong.!"
-		fi
-	else
-	echo "- Your log file is available locally at:"
-	realpath $FILE
-fi
