@@ -24,6 +24,8 @@ URL="https://file.io"
 DEFAULT_EXPIRE="14d" # Default to 14 days
 FILE=docker_container_informations_uploader.txt
 dt=$(date '+%d/%m/%Y %H:%M:%S');
+hostname=$(hostname)
+hostip=$(hostname -I)
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
 
@@ -32,6 +34,8 @@ echo "- Creating log file"
 # Quotes ensure format is kept
 echo "--------------------------------  INFOS --------------------------------" 				> docker_container_informations_uploader.txt
 echo "Time of generation: $dt" 																	>> docker_container_informations_uploader.txt
+echo "hostname: $hostname" 																		>> docker_container_informations_uploader.txt
+echo "IP: $hostip" 																				>> docker_container_informations_uploader.txt
 echo "-------------------------------- END OF INFOS --------------------------------" 			>> docker_container_informations_uploader.txt
 echo "- Getting Docker stats informations"
 echo "- docker stats --all --no-stream"
