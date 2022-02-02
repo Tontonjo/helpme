@@ -12,6 +12,7 @@ version=1.2
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
 # V1.2: add docker info
+# V1.3: add mountpoints
 
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
@@ -39,6 +40,8 @@ echo "-------------------------------- HOST INFOS ------------------------------
 echo "Time of generation: $dt" 									>> docker_container_informations_uploader.txt
 echo "hostname: $hostname" 									>> docker_container_informations_uploader.txt
 echo "IP: $hostip" 										>> docker_container_informations_uploader.txt
+echo "Mountpoints: " 										>> docker_container_informations_uploader.txt
+lsblk		 										>> docker_container_informations_uploader.txt
 echo "-------------------------------- END OF HOST INFOS --------------------------------" 	>> docker_container_informations_uploader.txt
 echo "- Getting general Docker informations"							
 echo "-------------------------------- DOCKER INFO --------------------------------" 		>> docker_container_informations_uploader.txt
