@@ -7,7 +7,7 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.2
+version=1.3
 
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
