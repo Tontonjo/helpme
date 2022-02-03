@@ -7,7 +7,7 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.6
+version=1.7
 
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
@@ -16,6 +16,7 @@ version=1.6
 # V1.4: add root rights check :-)
 # V1.5: remove container to get command, use built-in docker commands instead
 # V1.6: Fix exec error
+# V1.7: Exit if container does not exist - dont create file
 
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
@@ -38,38 +39,39 @@ loglastlines=100
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
-echo "- Creating log file"
-# Quotes ensure format is kept
-echo "-------------------------------- HOST INFOS --------------------------------" 		> docker_container_informations_uploader.txt
-echo "Time of generation: $dt" 									>> docker_container_informations_uploader.txt
-echo "hostname: $hostname" 									>> docker_container_informations_uploader.txt
-echo "IP: $hostip" 										>> docker_container_informations_uploader.txt
-echo "Host mounts: " 										>> docker_container_informations_uploader.txt
-lsblk		 										>> docker_container_informations_uploader.txt
-echo "-------------------------------- END OF HOST INFOS --------------------------------" 	>> docker_container_informations_uploader.txt
-echo "- Getting general Docker informations"							
-echo "-------------------------------- DOCKER INFO --------------------------------" 		>> docker_container_informations_uploader.txt
-docker info																					>> docker_container_informations_uploader.txt
-echo "-------------------------------- END OF INFO STATS --------------------------------"	>> docker_container_informations_uploader.txt
-echo "- Getting general Docker stats"	
-echo "-------------------------------- DOCKER STATS --------------------------------" 		>> docker_container_informations_uploader.txt
-docker stats --all --no-stream									>> docker_container_informations_uploader.txt
-echo "-------------------------------- END OF DOCKER STATS --------------------------------"	>> docker_container_informations_uploader.txt
-echo "- Getting general Docker networks infos"	
-echo "-------------------------------- DOCKER NETWORKS --------------------------------" 	>> docker_container_informations_uploader.txt
-docker network ls										>> docker_container_informations_uploader.txt
-echo "-------------------------------- END OF DOCKER NETWORKS --------------------------------"	>> docker_container_informations_uploader.txt
-
 if [ $# -eq 0 ]; then
-echo "- No container specified - getting infos about all containers"
-	containerlist=$(docker stats --all --no-stream | awk '{print $2}' | tail -n +2)
-else
-	containerlist=$@
-fi
-echo "- Getting needed container to retreive informations - this may take some times"
-docker inspect --help > /dev/null
-if [ $? -eq 0 ]; then
+	echo "- No container specified - getting infos about all containers"
+		containerlist=$(docker stats --all --no-stream | awk '{print $2}' | tail -n +2)
+	else
+		containerlist=$@
+	fi
+	echo "- Getting needed container to retreive informations - this may take some times"
+	docker inspect --help > /dev/null
+	if [ $? -eq 0 ]; then
+	echo "- Creating log file"
+	# Quotes ensure format is kept
+	echo "-------------------------------- HOST INFOS --------------------------------" 		> docker_container_informations_uploader.txt
+	echo "Time of generation: $dt" 									>> docker_container_informations_uploader.txt
+	echo "hostname: $hostname" 									>> docker_container_informations_uploader.txt
+	echo "IP: $hostip" 										>> docker_container_informations_uploader.txt
+	echo "Host mounts: " 										>> docker_container_informations_uploader.txt
+	lsblk		 										>> docker_container_informations_uploader.txt
+	echo "-------------------------------- END OF HOST INFOS --------------------------------" 	>> docker_container_informations_uploader.txt
+	echo "- Getting general Docker informations"							
+	echo "-------------------------------- DOCKER INFO --------------------------------" 		>> docker_container_informations_uploader.txt
+	docker info																					>> docker_container_informations_uploader.txt
+	echo "-------------------------------- END OF INFO STATS --------------------------------"	>> docker_container_informations_uploader.txt
+	echo "- Getting general Docker stats"	
+	echo "-------------------------------- DOCKER STATS --------------------------------" 		>> docker_container_informations_uploader.txt
+	docker stats --all --no-stream									>> docker_container_informations_uploader.txt
+	echo "-------------------------------- END OF DOCKER STATS --------------------------------"	>> docker_container_informations_uploader.txt
+	echo "- Getting general Docker networks infos"	
+	echo "-------------------------------- DOCKER NETWORKS --------------------------------" 	>> docker_container_informations_uploader.txt
+	docker network ls										>> docker_container_informations_uploader.txt
+	echo "-------------------------------- END OF DOCKER NETWORKS --------------------------------"	>> docker_container_informations_uploader.txt
 	for I in $containerlist ; do
+		docker inspect $I > /dev/nul
+		if [ $? -eq 0 ]; then
 		echo "- Container $I - Getting Docker stats informations"
 			echo "-------------------------------- DOCKER $I INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo " Image: "																					>> docker_container_informations_uploader.txt
@@ -92,6 +94,10 @@ if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I LOG --------------------------------" 			>> docker_container_informations_uploader.txt
 			docker logs -t $I | tail -$loglastlines									>> docker_container_informations_uploader.txt
 			echo "-------------------------------- END DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
+		else
+			echo "- Failed to find container $I - control container name"
+			exit	
+		fi
 		done	
 		# Checking and sharing output
 		echo "- Validating file exist" 
