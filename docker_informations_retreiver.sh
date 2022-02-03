@@ -7,12 +7,13 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.3
+version=1.4
 
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
 # V1.2: add docker info
 # V1.3: add mountpoints
+# V1.4: add root rights check :-)
 
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
@@ -32,7 +33,8 @@ hostip=$(hostname -I)
 loglastlines=100
 # ---------------END OF ENVIRONNEMENT VARIABLES-----------------
 
-
+# check if root
+if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
 
 echo "- Creating log file"
 # Quotes ensure format is kept
