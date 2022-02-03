@@ -7,7 +7,7 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.5
+version=1.6
 
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
@@ -15,6 +15,7 @@ version=1.5
 # V1.3: add mountpoints
 # V1.4: add root rights check :-)
 # V1.5: remove container to get command, use built-in docker commands instead
+# V1.6: Fix exec error
 
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
@@ -74,7 +75,7 @@ if [ $? -eq 0 ]; then
 		docker inspect nextcloud > /dev/null
 		if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
-			echo " Image: "													>> docker_container_informations_uploader.txt
+			echo " Image: "																					>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.Config.Image}}' $I					>> docker_container_informations_uploader.txt
 			echo " State running? "											>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.State.Running}}' $I					>> docker_container_informations_uploader.txt
@@ -90,8 +91,7 @@ if [ $? -eq 0 ]; then
 			docker inspect --format='{{.NetworkSettings.Bridge}}' $I		>> docker_container_informations_uploader.txt
 			echo " Volume Binds: "											>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.HostConfig.Binds}}' $I				>> docker_container_informations_uploader.txt
-
-			echo "-------------------------------- DOCKER $I INFOS" --------------------------------" 		>> docker_container_informations_uploader.txt
+			echo "-------------------------------- DOCKER $I INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I LOG --------------------------------" 			>> docker_container_informations_uploader.txt
 			docker logs -t $I | tail -$loglastlines									>> docker_container_informations_uploader.txt
 			echo "-------------------------------- END DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
