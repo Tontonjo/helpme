@@ -71,9 +71,6 @@ docker inspect --help > /dev/null
 if [ $? -eq 0 ]; then
 	for I in $containerlist ; do
 		echo "- Container $I - Getting Docker stats informations"
-		# Get command used to start container
-		docker inspect nextcloud > /dev/null
-		if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo " Image: "																					>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.Config.Image}}' $I					>> docker_container_informations_uploader.txt
@@ -95,13 +92,6 @@ if [ $? -eq 0 ]; then
 			echo "-------------------------------- DOCKER $I LOG --------------------------------" 			>> docker_container_informations_uploader.txt
 			docker logs -t $I | tail -$loglastlines									>> docker_container_informations_uploader.txt
 			echo "-------------------------------- END DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
-			
-		else
-			echo "- Failed to run with specified container $I - does it exist?"
-			echo "- Script will exit now"
-			sleep 7
-			exit
-		fi
 		done	
 		# Checking and sharing output
 		echo "- Validating file exist" 
@@ -130,7 +120,7 @@ if [ $? -eq 0 ]; then
 			realpath $FILE
 fi
 	else
-		echo "- Failed to download needed ressources using docker pull"
+		echo "- Failed to execute docker"
 		echo "- Script will exit now"
 		sleep 7
 		exit
