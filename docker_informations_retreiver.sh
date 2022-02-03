@@ -7,13 +7,14 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.4
+version=1.5
 
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
 # V1.2: add docker info
 # V1.3: add mountpoints
 # V1.4: add root rights check :-)
+# V1.5: remove container to get command, use built-in docker commands instead
 
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
@@ -42,12 +43,12 @@ echo "-------------------------------- HOST INFOS ------------------------------
 echo "Time of generation: $dt" 									>> docker_container_informations_uploader.txt
 echo "hostname: $hostname" 									>> docker_container_informations_uploader.txt
 echo "IP: $hostip" 										>> docker_container_informations_uploader.txt
-echo "Mountpoints: " 										>> docker_container_informations_uploader.txt
+echo "Host mounts: " 										>> docker_container_informations_uploader.txt
 lsblk		 										>> docker_container_informations_uploader.txt
 echo "-------------------------------- END OF HOST INFOS --------------------------------" 	>> docker_container_informations_uploader.txt
 echo "- Getting general Docker informations"							
 echo "-------------------------------- DOCKER INFO --------------------------------" 		>> docker_container_informations_uploader.txt
-docker info											>> docker_container_informations_uploader.txt
+docker info																					>> docker_container_informations_uploader.txt
 echo "-------------------------------- END OF INFO STATS --------------------------------"	>> docker_container_informations_uploader.txt
 echo "- Getting general Docker stats"	
 echo "-------------------------------- DOCKER STATS --------------------------------" 		>> docker_container_informations_uploader.txt
@@ -70,11 +71,27 @@ docker pull nexdrew/rekcod -q > /dev/null
 	for I in $containerlist ; do
 		echo "- Container $I - Getting Docker stats informations"
 		# Get command used to start container
-		command=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I)
+		docker inspect nextcloud > /dev/null
 		if [ $? -eq 0 ]; then
-			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
-			docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nexdrew/rekcod $I			>> docker_container_informations_uploader.txt
-			echo "-------------------------------- DOCKER $I COMMAND --------------------------------" 		>> docker_container_informations_uploader.txt
+			echo "-------------------------------- DOCKER $I INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
+			echo " Image: "													>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.Config.Image}}' $I					>> docker_container_informations_uploader.txt
+			echo " State running? "											>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.State.Running}}' $I					> docker_container_informations_uploader.txt
+			echo " Restart Policy: "										>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.HostConfig.RestartPolicy.Name}}' $I	>> docker_container_informations_uploader.txt
+			echo " Restart Policy: "										>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.Config.Env}}' $I					>> docker_container_informations_uploader.txt
+			echo " Container IP: "											>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.NetworkSettings.IPAddress}}' $I		>> docker_container_informations_uploader.txt
+			echo " Ports: "													>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.NetworkSettings.Ports}}' $I			>> docker_container_informations_uploader.txt
+			echo " Bridge?: "												>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.NetworkSettings.Bridge}}' $I		>> docker_container_informations_uploader.txt
+			echo " Volume Binds: "											>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.HostConfig.Binds}}' $I				>> docker_container_informations_uploader.txt
+
+			echo "-------------------------------- DOCKER $I INFOS" --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I LOG --------------------------------" 			>> docker_container_informations_uploader.txt
 			docker logs -t $I | tail -$loglastlines									>> docker_container_informations_uploader.txt
 			echo "-------------------------------- END DOCKER $I LOG --------------------------------" 		>> docker_container_informations_uploader.txt
