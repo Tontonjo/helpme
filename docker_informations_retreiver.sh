@@ -66,8 +66,8 @@ else
 	containerlist=$@
 fi
 echo "- Getting needed container to retreive informations - this may take some times"
-docker pull nexdrew/rekcod -q > /dev/null
-	if [ $? -eq 0 ]; then
+docker inspect --help > /dev/null
+if [ $? -eq 0 ]; then
 	for I in $containerlist ; do
 		echo "- Container $I - Getting Docker stats informations"
 		# Get command used to start container
@@ -77,7 +77,7 @@ docker pull nexdrew/rekcod -q > /dev/null
 			echo " Image: "													>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.Config.Image}}' $I					>> docker_container_informations_uploader.txt
 			echo " State running? "											>> docker_container_informations_uploader.txt
-			docker inspect --format='{{.State.Running}}' $I					> docker_container_informations_uploader.txt
+			docker inspect --format='{{.State.Running}}' $I					>> docker_container_informations_uploader.txt
 			echo " Restart Policy: "										>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.HostConfig.RestartPolicy.Name}}' $I	>> docker_container_informations_uploader.txt
 			echo " Restart Policy: "										>> docker_container_informations_uploader.txt
