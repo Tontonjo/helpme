@@ -28,7 +28,7 @@ echo "----------------------------------------------------------------"
 
 # -----------------ENVIRONNEMENT VARIABLES----------------------
 URL="https://file.io"
-DEFAULT_EXPIRE="14d" # Default to 14 days
+DEFAULT_EXPIRE="14" # Default to 14 days
 FILE=docker_container_informations_uploader.txt
 dt=$(date '+%d/%m/%Y %H:%M:%S');
 hostname=$(hostname)
@@ -107,6 +107,7 @@ if [ $# -eq 0 ]; then
 		fi
 		read -p "- Do you want to upload this log to file.io and download it? y = yes / anything = no: " -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			echo " " 
 			echo "- Defining expidation to $DEFAULT_EXPIRE" 
 			EXPIRE=${2:-$DEFAULT_EXPIRE}
 			echo "- Uploading file to file.io"
