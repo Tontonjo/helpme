@@ -109,15 +109,15 @@ if [ $# -eq 0 ]; then
 		read -p "- Do you want to upload this log to file.io and download it? y = yes / anything = no: " -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			echo " " 
-			if [[ $REPLY == *"error"* ]]; then
-			echo "- File upload failed"
-			echo $RESPONSE
-			sleep 7
-			exit
-			fi
 			echo "- Uploading file to file.io"
 			RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${DEFAULT_EXPIRE}")
 				if [ $? -eq 0 ]; then
+					if [[ $REPLY == *"error"* ]]; then
+					echo "- File upload failed"
+					echo $RESPONSE
+					sleep 7
+					exit
+					fi
 					echo "- Upload Successfull!"
 					echo "- Please download your file then share it with us"
 					echo "- Before share, check it doesnt contains any private informations"
