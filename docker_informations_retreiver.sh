@@ -86,7 +86,7 @@ if [ $# -eq 0 ]; then
 			echo "- Container IP: "											>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.NetworkSettings.IPAddress}}' $I		>> docker_container_informations_uploader.txt
 			echo "- Ports: "													>> docker_container_informations_uploader.txt
-			docker inspect --format='{{.NetworkSettings.Ports}}' $I	| tr " " \\n		>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.NetworkSettings.Ports}}' $I		>> docker_container_informations_uploader.txt
 			echo "- Bridge?: "												>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.NetworkSettings.Bridge}}' $I		>> docker_container_informations_uploader.txt
 			echo "- Volume Binds: "											>> docker_container_informations_uploader.txt
