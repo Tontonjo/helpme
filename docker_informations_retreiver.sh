@@ -75,22 +75,22 @@ if [ $# -eq 0 ]; then
 		if [ $? -eq 0 ]; then
 		echo "- Container $I - Getting Docker stats informations"
 			echo "-------------------------------- DOCKER $I INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
-			echo " Image: "																					>> docker_container_informations_uploader.txt
+			echo "- Image: "																					>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.Config.Image}}' $I					>> docker_container_informations_uploader.txt
-			echo " State running? "											>> docker_container_informations_uploader.txt
+			echo "- State running? "											>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.State.Running}}' $I					>> docker_container_informations_uploader.txt
-			echo " Restart Policy: "										>> docker_container_informations_uploader.txt
+			echo "- Restart Policy: "										>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.HostConfig.RestartPolicy.Name}}' $I	>> docker_container_informations_uploader.txt
-			echo " Restart Policy: "										>> docker_container_informations_uploader.txt
+			echo "- Environement configurations: "										>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.Config.Env}}' $I					>> docker_container_informations_uploader.txt
-			echo " Container IP: "											>> docker_container_informations_uploader.txt
+			echo "- Container IP: "											>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.NetworkSettings.IPAddress}}' $I		>> docker_container_informations_uploader.txt
-			echo " Ports: "													>> docker_container_informations_uploader.txt
-			docker inspect --format='{{.NetworkSettings.Ports}}' $I			>> docker_container_informations_uploader.txt
-			echo " Bridge?: "												>> docker_container_informations_uploader.txt
+			echo "- Ports: "													>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.NetworkSettings.Ports}}' $I	| tr " " \\n		>> docker_container_informations_uploader.txt
+			echo "- Bridge?: "												>> docker_container_informations_uploader.txt
 			docker inspect --format='{{.NetworkSettings.Bridge}}' $I		>> docker_container_informations_uploader.txt
-			echo " Volume Binds: "											>> docker_container_informations_uploader.txt
-			docker inspect --format='{{.HostConfig.Binds}}' $I				>> docker_container_informations_uploader.txt
+			echo "- Volume Binds: "											>> docker_container_informations_uploader.txt
+			docker inspect --format='{{.HostConfig.Binds}}' $I | tr " " \\n				>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I INFOS --------------------------------" 		>> docker_container_informations_uploader.txt
 			echo "-------------------------------- DOCKER $I LOG --------------------------------" 			>> docker_container_informations_uploader.txt
 			docker logs -t $I | tail -$loglastlines									>> docker_container_informations_uploader.txt
