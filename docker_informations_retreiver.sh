@@ -7,7 +7,7 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.7
+version=1.8
 
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
@@ -17,6 +17,7 @@ version=1.7
 # V1.5: remove container to get command, use built-in docker commands instead
 # V1.6: Fix exec error
 # V1.7: Exit if container does not exist - dont create file
+# V1.8: Fix url to send that may lead to error in some cases, add error management
 
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
@@ -108,10 +109,14 @@ if [ $# -eq 0 ]; then
 		read -p "- Do you want to upload this log to file.io and download it? y = yes / anything = no: " -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			echo " " 
-			echo "- Defining expidation to $DEFAULT_EXPIRE" 
-			EXPIRE=${2:-$DEFAULT_EXPIRE}
+			if [[ $REPLY == *"error"* ]]; then
+			echo "- File upload failed"
+			echo $RESPONSE
+			sleep 7
+			exit
+			fi
 			echo "- Uploading file to file.io"
-			RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${EXPIRE}")
+			RESPONSE=$(curl -# -F "file=@${FILE}" "${URL}/?expires=${DEFAULT_EXPIRE}")
 				if [ $? -eq 0 ]; then
 					echo "- Upload Successfull!"
 					echo "- Please download your file then share it with us"
@@ -125,7 +130,7 @@ if [ $# -eq 0 ]; then
 			else
 			echo "- Your log file is available locally at:"
 			realpath $FILE
-fi
+		fi
 	else
 		echo "- Failed to execute docker"
 		echo "- Script will exit now"
