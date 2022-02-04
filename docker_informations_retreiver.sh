@@ -28,7 +28,7 @@ echo "----------------------------------------------------------------"
 
 # -----------------ENVIRONNEMENT VARIABLES----------------------
 URL="https://file.io"
-DEFAULT_EXPIRE="14" # Default to 14 days
+DEFAULT_EXPIRE="14d" # Default to 14 days
 FILE=docker_container_informations_uploader.txt
 dt=$(date '+%d/%m/%Y %H:%M:%S')
 hostname=$(hostname)
