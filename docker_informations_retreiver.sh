@@ -7,7 +7,7 @@
 # It's not intended to get private informations, but as this is scripted, some may be unintentionnaly get
 # Please check your upload before sharing the link
 
-version=1.8
+version=1.9
 
 # V1.0: Initial Release
 # V1.1: enhencement, add docker networks
@@ -18,6 +18,7 @@ version=1.8
 # V1.6: Fix exec error
 # V1.7: Exit if container does not exist - dont create file
 # V1.8: Fix url to send that may lead to error in some cases, add error management
+# V1.9: Install curl if not existing
 
 # Sources:
 # https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
@@ -39,6 +40,10 @@ loglastlines=100
 
 # check if root
 if [[ $(id -u) -ne 0 ]] ; then echo "- Please run as root / sudo" ; exit 1 ; fi
+
+if [ $(dpkg-query -W -f='${Status}' curl 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+apt-get install -y curl;
+fi
 
 if [ $# -eq 0 ]; then
 	echo "- No container specified - getting infos about all containers"
