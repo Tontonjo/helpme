@@ -22,12 +22,12 @@ https://gist.github.com/jonlabelle/8cbd78c9277e76cb21a142f0c556e939
 - Create a file with all thoses informations
 - Allow you to upload it or not on file.io  
 ### How to:
-#### Execute script and retreive informations about all running containers:
+#### Retreive informations about all running containers:
 ```shell
 wget -qO docker_informations_retreiver.sh https://github.com/Tontonjo/helpme/raw/main/docker_informations_retreiver.sh && bash docker_informations_retreiver.sh
 ```  
 
-#### Execute script and retreive informations about one or more containers:
+#### OR retreive informations about one or more containers:
 - Find your $containername
 ```shell
 docker stats --all
